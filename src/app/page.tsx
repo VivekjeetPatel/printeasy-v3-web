@@ -106,8 +106,11 @@ export default function Home() {
             <li className="mb-2 tracking-[-.01em]">
               Your document is securely stored and processed
             </li>
+            <li className="mb-2 tracking-[-.01em]">
+              The Printer will automatically receive and print your document
+            </li>
             <li className="tracking-[-.01em]">
-              The merchant will automatically receive and print your document
+              After printing, your document will be gone from server in a minute 🙂.
             </li>
           </ol>
         </div>
