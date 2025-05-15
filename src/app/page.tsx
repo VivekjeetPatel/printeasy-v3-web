@@ -56,7 +56,7 @@ export default function Home() {
       <main className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-32">
         <div className="w-full max-w-2xl mx-auto flex flex-col gap-16">
           <div className="text-center mb-16 space-y-6">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-800">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-800 ">
               PrintEasy
             </h1>
             <p className="text-xl sm:text-2xl text-gray-600 max-w-2xl mx-auto">
