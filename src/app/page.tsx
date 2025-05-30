@@ -3,8 +3,6 @@ import { useRef, useState } from "react";
 import { storage, db } from "@/lib/firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import Image from "next/image";
-import Link from "next/link";
 
 export default function Home() {
   const fileInputRef = useRef<HTMLInputElement>(null);
