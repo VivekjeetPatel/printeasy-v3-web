@@ -162,7 +162,7 @@ export default function ShopUploadPage() {
                   // Payment
                   const totalAmount = pageCount * merchant.costPerPage * 100;
                   const options = {
-                    key: "rzp_test_Rnc7we4eBrc0KV",
+                    key: "rzp_live_bWsP3uljCMWJFm",
                     amount: totalAmount,
                     currency: "INR",
                     name: merchant.shopName,
@@ -241,7 +241,7 @@ export default function ShopUploadPage() {
         </div>
       </main>
       <footer className="py-8 text-center text-gray-600 bg-white/50 backdrop-blur-sm mt-10">
-        <p className="text-sm">© {new Date().getFullYear()} neuraltechnologies.in. No rights reserved.</p>
+        <p className="text-sm">© {new Date().getFullYear()} neuraltechnologies.in. All rights reserved.</p>
       </footer>
       <Script src="https://checkout.razorpay.com/v1/checkout.js" />
       <Script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js" strategy="beforeInteractive" />
