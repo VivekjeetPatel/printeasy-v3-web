@@ -1,12 +1,7 @@
 "use client";
 import { useRef } from "react";
-import { storage, db } from "@/lib/firebase";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 export default function Home() {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-blue-50 to-white">
       <nav className="w-full flex justify-between items-center px-8 py-4 bg-white/80 shadow-sm">

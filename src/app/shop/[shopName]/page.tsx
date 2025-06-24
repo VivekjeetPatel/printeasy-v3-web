@@ -1,8 +1,6 @@
 "use client";
 import { useRef, useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { collection, addDoc, serverTimestamp, doc, getDoc } from "firebase/firestore";
 import Script from "next/script";
@@ -25,8 +23,6 @@ export default function ShopUploadPage() {
   const [merchant, setMerchant] = useState<Merchant | null>(null);
   const [pageCount, setPageCount] = useState<number | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  const [paymentSuccess, setPaymentSuccess] = useState(false);
-  const [paymentId, setPaymentId] = useState("");
 
   useEffect(() => {
     async function fetchMerchant() {
@@ -125,8 +121,6 @@ export default function ShopUploadPage() {
                     name: merchant.shopName,
                     description: `Print job for ${merchant.shopName}`,
                     handler: async function (response: { razorpay_payment_id: string }) {
-                      setPaymentSuccess(true);
-                      setPaymentId(response.razorpay_payment_id);
                       // Upload after payment
                       setUploading(true);
                       const storageRef = ref(storage, `uploads/${shopName}/${Date.now()}_${file.name}`);
@@ -157,8 +151,6 @@ export default function ShopUploadPage() {
                           setUploading(false);
                           setSuccess(true);
                           setProgress(0);
-                          setPaymentSuccess(false);
-                          setPaymentId("");
                           setFile(null);
                           setPageCount(null);
                           if (fileInputRef.current) fileInputRef.current.value = "";
