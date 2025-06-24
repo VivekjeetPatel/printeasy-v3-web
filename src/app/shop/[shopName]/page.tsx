@@ -15,7 +15,7 @@ export default function ShopUploadPage() {
   const [progress, setProgress] = useState(0);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
-  const [merchant, setMerchant] = useState<any>(null);
+  const [merchant, setMerchant] = useState<Record<string, unknown> | null>(null);
   const [pageCount, setPageCount] = useState<number | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
@@ -27,7 +27,7 @@ export default function ShopUploadPage() {
         const merchantRef = doc(db, "merchants", shopName as string);
         const merchantSnap = await getDoc(merchantRef);
         if (merchantSnap.exists()) {
-          setMerchant(merchantSnap.data());
+          setMerchant(merchantSnap.data() as Record<string, unknown>);
         }
       }
     }
@@ -46,7 +46,7 @@ export default function ShopUploadPage() {
       return;
     }
     const reader = new FileReader();
-    // @ts-ignore
+    // @ts-expect-error
     const pdfjsLib = typeof window !== 'undefined' ? window.pdfjsLib : undefined;
     if (!pdfjsLib) {
       setError("PDF library not loaded");
@@ -54,63 +54,13 @@ export default function ShopUploadPage() {
     }
     reader.onload = function () {
       const typedarray = new Uint8Array(reader.result as ArrayBuffer);
-      pdfjsLib.getDocument({ data: typedarray }).promise.then(function (pdf: any) {
+      pdfjsLib.getDocument({ data: typedarray }).promise.then(function (pdf: { numPages: number }) {
         setPageCount(pdf.numPages);
-      }).catch((err: any) => {
+      }).catch((err: { message: string }) => {
         setError('Error reading PDF: ' + err.message);
       });
     };
     reader.readAsArrayBuffer(selectedFile);
-  };
-
-  const handleUpload = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSuccess(false);
-    setError("");
-    if (!paymentSuccess) {
-      setError("Please complete payment first.");
-      return;
-    }
-    if (!file) {
-      setError("Please select a file.");
-      return;
-    }
-    setUploading(true);
-    const storageRef = ref(storage, `uploads/${shopName}/${Date.now()}_${file.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, file);
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        setProgress(Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100));
-      },
-      (err) => {
-        setError(err.message);
-        setUploading(false);
-      },
-      async () => {
-        const url = await getDownloadURL(uploadTask.snapshot.ref);
-        await addDoc(collection(db, "files"), {
-          shopName,
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          url,
-          uploadedAt: serverTimestamp(),
-          pageCount,
-          cost: pageCount && merchant ? pageCount * merchant.costPerPage : null,
-          paymentId,
-          status: "pending"
-        });
-        setUploading(false);
-        setSuccess(true);
-        setProgress(0);
-        setPaymentSuccess(false);
-        setPaymentId("");
-        setFile(null);
-        setPageCount(null);
-        if (fileInputRef.current) fileInputRef.current.value = "";
-      }
-    );
   };
 
   return (
@@ -167,7 +117,7 @@ export default function ShopUploadPage() {
                     currency: "INR",
                     name: merchant.shopName,
                     description: `Print job for ${merchant.shopName}`,
-                    handler: async function (response: any) {
+                    handler: async function (response: { razorpay_payment_id: string }) {
                       setPaymentSuccess(true);
                       setPaymentId(response.razorpay_payment_id);
                       // Upload after payment
@@ -211,7 +161,7 @@ export default function ShopUploadPage() {
                     prefill: { email: "" },
                     theme: { color: "#2563eb" },
                   };
-                  // @ts-ignore
+                  // @ts-expect-error
                   const rzp = new window.Razorpay(options);
                   rzp.open();
                 }}
