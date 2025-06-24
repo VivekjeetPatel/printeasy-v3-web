@@ -1,53 +1,11 @@
 "use client";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { storage, db } from "@/lib/firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 export default function Home() {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState("");
-
-  const handleUpload = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSuccess(false);
-    setError("");
-    const file = fileInputRef.current?.files?.[0];
-    if (!file) {
-      setError("Please select a file.");
-      return;
-    }
-    setUploading(true);
-    const storageRef = ref(storage, `uploads/${Date.now()}_${file.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, file);
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        setProgress(Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100));
-      },
-      (err) => {
-        setError(err.message);
-        setUploading(false);
-      },
-      async () => {
-        const url = await getDownloadURL(uploadTask.snapshot.ref);
-        await addDoc(collection(db, "files"), {
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          url,
-          uploadedAt: serverTimestamp(),
-        });
-        setUploading(false);
-        setSuccess(true);
-        setProgress(0);
-        if (fileInputRef.current) fileInputRef.current.value = "";
-      }
-    );
-  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-blue-50 to-white">

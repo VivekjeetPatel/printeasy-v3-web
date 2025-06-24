@@ -8,6 +8,13 @@ import { collection, addDoc, serverTimestamp, doc, getDoc } from "firebase/fires
 import Script from "next/script";
 import { db, storage } from "@/lib/firebase";
 
+// Define Merchant type
+interface Merchant {
+  costPerPage: number;
+  upiId: string;
+  shopName: string;
+}
+
 export default function ShopUploadPage() {
   const { shopName } = useParams();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -15,7 +22,7 @@ export default function ShopUploadPage() {
   const [progress, setProgress] = useState(0);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
-  const [merchant, setMerchant] = useState<Record<string, unknown> | null>(null);
+  const [merchant, setMerchant] = useState<Merchant | null>(null);
   const [pageCount, setPageCount] = useState<number | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
@@ -27,7 +34,7 @@ export default function ShopUploadPage() {
         const merchantRef = doc(db, "merchants", shopName as string);
         const merchantSnap = await getDoc(merchantRef);
         if (merchantSnap.exists()) {
-          setMerchant(merchantSnap.data() as Record<string, unknown>);
+          setMerchant(merchantSnap.data() as Merchant);
         }
       }
     }
@@ -46,7 +53,7 @@ export default function ShopUploadPage() {
       return;
     }
     const reader = new FileReader();
-    // @ts-expect-error
+    // @ts-expect-error: pdfjsLib is loaded globally from CDN
     const pdfjsLib = typeof window !== 'undefined' ? window.pdfjsLib : undefined;
     if (!pdfjsLib) {
       setError("PDF library not loaded");
@@ -161,7 +168,7 @@ export default function ShopUploadPage() {
                     prefill: { email: "" },
                     theme: { color: "#2563eb" },
                   };
-                  // @ts-expect-error
+                  // @ts-expect-error: Razorpay is loaded globally from CDN
                   const rzp = new window.Razorpay(options);
                   rzp.open();
                 }}
