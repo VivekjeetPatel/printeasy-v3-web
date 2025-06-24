@@ -4,8 +4,14 @@ import { useRouter } from "next/navigation";
 import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 
+// Define Merchant type
+interface Merchant {
+  shopName: string;
+  // Add other fields as needed
+}
+
 export default function MerchantDashboard() {
-  const [merchant, setMerchant] = useState<any>(null);
+  const [merchant, setMerchant] = useState<Merchant | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -17,13 +23,13 @@ export default function MerchantDashboard() {
       return;
     }
     async function fetchMerchant() {
-      const merchantRef = doc(db, "merchants", shopName);
+      const merchantRef = doc(db, "merchants", shopName as string);
       const merchantSnap = await getDoc(merchantRef);
       if (!merchantSnap.exists()) {
         router.push("/merchant/login");
         return;
       }
-      setMerchant({ ...merchantSnap.data(), shopName });
+      setMerchant({ ...merchantSnap.data(), shopName: shopName as string });
       setLoading(false);
     }
     fetchMerchant();

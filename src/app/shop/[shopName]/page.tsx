@@ -30,7 +30,8 @@ export default function ShopUploadPage() {
         const merchantRef = doc(db, "merchants", shopName as string);
         const merchantSnap = await getDoc(merchantRef);
         if (merchantSnap.exists()) {
-          setMerchant(merchantSnap.data() as Merchant);
+          const data = merchantSnap.data() as Merchant;
+          setMerchant({ ...data, shopName: shopName as string });
         }
       }
     }

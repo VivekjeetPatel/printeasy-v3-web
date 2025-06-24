@@ -39,8 +39,8 @@ export default function MerchantLogin() {
         sessionStorage.setItem("shopName", form.shopName);
       }
       router.push("/merchant/dashboard");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err));
     } finally {
       setLoading(false);
     }
